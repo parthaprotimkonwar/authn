@@ -7,6 +7,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.springframework.transaction.annotation.Transactional;
+
+import controllers.requestdto.AddressRequestDto;
 import controllers.responsedto.AddressDto;
 import models.Address;
 import models.UserAddress;
@@ -14,20 +17,32 @@ import models.UserIdAddressId;
 import models.Users;
 import play.exceptions.BaseException;
 import play.exceptions.ErrorConstants;
+import repository.AddressRepository;
 import repository.UserAddressRepository;
-import services.service.UserAddressI;
+import repository.UsersRepository;
+import services.service.UserAddressServiceI;
 
 @Named
 @Singleton
-public class UserAddressServiceImpl implements UserAddressI{
+@Transactional
+public class UserAddressServiceImpl implements UserAddressServiceI{
 
 	@Inject
 	UserAddressRepository userAddressRepository;
-
+	
+	@Inject
+	UsersRepository usersRepository;
+	
+	@Inject
+	AddressRepository addressRepository;
+	
 	@Override
-	public UserAddress createUserAddress(Users user, Address address) throws BaseException {
+	public UserAddress createUserAddress(Users user, AddressRequestDto address) throws BaseException {
 		try {
-			UserIdAddressId userIdAddressId = new UserIdAddressId(user, address);
+			Address completeAddress = new Address(address.addressHeading, address.pincode, address.address, address.landmark, address.phoneNo, address.city, address.state, address.country);
+			addressRepository.save(completeAddress);
+			
+			UserIdAddressId userIdAddressId = new UserIdAddressId(user, completeAddress);
 			UserAddress userAddress = new UserAddress(userIdAddressId);
 			return userAddressRepository.save(userAddress);
 		} catch (Exception ex) {

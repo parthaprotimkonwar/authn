@@ -6,7 +6,7 @@ import javax.inject.Singleton;
 
 import services.service.AddressServiceI;
 import services.service.PersonServiceI;
-import services.service.UserAddressI;
+import services.service.UserAddressServiceI;
 import services.service.UserTokenServiceI;
 import services.service.UsersFrugalServiceI;
 import services.service.UsersGuestServiceI;
@@ -24,7 +24,7 @@ public class ServicesFactory {
 	public AddressServiceI addressService;
 	
 	@Inject
-	public UserAddressI userAddressService;
+	public UserAddressServiceI userAddressService;
 	
 	@Inject
 	public UsersFrugalServiceI usersFrugalService;
