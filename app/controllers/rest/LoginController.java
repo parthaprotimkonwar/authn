@@ -81,20 +81,10 @@ public class LoginController extends BaseController{
 					break;
 				
 				case SOCIAL:
-					// validation for password field
-					status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.password);
-					if(!status.isValidated()) {
-						throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
-					}
-					
-					// validation for email field
-					status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.email);
-					if(!status.isValidated()) {
-						throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
-					}
-					
-					// validation for phoneNo field
-					status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.phoneNo);
+					// validation for mandatory field
+					status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.password,
+							UsersRequestDto.UsersRequestFields.email,
+							UsersRequestDto.UsersRequestFields.phoneNo);
 					if(!status.isValidated()) {
 						throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
 					}
@@ -170,35 +160,16 @@ public class LoginController extends BaseController{
 		UsersResponseDto response;
 		try { 
 			UsersRequestDto userRequestDto = convertRequestBodyToObject(request().body(), UsersRequestDto.class);
-			
+			// validating mandatory fields
 			UsersRequestDtoValidationEngine validator = new UsersRequestDtoValidationEngine();
-			ValidationResponse status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.userType);			//userType is mandatory for now
+			ValidationResponse status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.userType,
+					UsersRequestDto.UsersRequestFields.email,
+					UsersRequestDto.UsersRequestFields.phoneNo,
+					UsersRequestDto.UsersRequestFields.password,
+					UsersRequestDto.UsersRequestFields.name);
 			if(!status.isValidated()) {
 				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
 			} 
-			// validating email field
-			status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.email);
-			if(!status.isValidated()) {
-				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
-			}
-			
-			// validating phone_no field
-			status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.phoneNo);
-			if(!status.isValidated()) {
-				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
-			}
-			
-			// validating password field
-			status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.password);
-			if(!status.isValidated()) {
-				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
-			}
-			
-			// validating name field
-			status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.name);
-			if(!status.isValidated()) {
-				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
-			}
 			
 			UserType userType = UserType.value(userRequestDto.userType);
 			

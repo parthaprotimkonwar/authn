@@ -44,44 +44,14 @@ public class ActivitiesController extends BaseController{
 		try {
 			AddressRequestDto addressRequest = convertRequestBodyToObject(request().body(), AddressRequestDto.class);
 			UsersRequestDtoValidationEngine validator = new UsersRequestDtoValidationEngine();
-			// validation for token field
-			ValidationResponse status = validator.checkForMandatoryFields(addressRequest, AddressRequestDto.AddressRequestDtoFields.token);
-			if(!status.isValidated()) {
-				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
-			}
-			
-			// validation for pincode field
-			status = validator.checkForMandatoryFields(addressRequest, AddressRequestDto.AddressRequestDtoFields.pincode);
-			if(!status.isValidated()) {
-				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
-			}
-			
-			// validation for address field
-			status = validator.checkForMandatoryFields(addressRequest, AddressRequestDto.AddressRequestDtoFields.address);
-			if(!status.isValidated()) {
-				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
-			}
-			
-			// validation for phoneNo field
-			status = validator.checkForMandatoryFields(addressRequest, AddressRequestDto.AddressRequestDtoFields.phoneNo);
-			if(!status.isValidated()) {
-				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
-			}
-			
-			// validation for city field
-			status = validator.checkForMandatoryFields(addressRequest, AddressRequestDto.AddressRequestDtoFields.city);
-			if(!status.isValidated()) {
-				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
-			}
-			
-			// validation for state field
-			status = validator.checkForMandatoryFields(addressRequest, AddressRequestDto.AddressRequestDtoFields.state);
-			if(!status.isValidated()) {
-				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
-			}
-			
-			// validation for country field
-			status = validator.checkForMandatoryFields(addressRequest, AddressRequestDto.AddressRequestDtoFields.country);
+			// validation for mandatory fields
+			ValidationResponse status = validator.checkForMandatoryFields(addressRequest, AddressRequestDto.AddressRequestDtoFields.token,
+					AddressRequestDto.AddressRequestDtoFields.pincode,
+					AddressRequestDto.AddressRequestDtoFields.address,
+					AddressRequestDto.AddressRequestDtoFields.phoneNo,
+					AddressRequestDto.AddressRequestDtoFields.city,
+					AddressRequestDto.AddressRequestDtoFields.state,
+					AddressRequestDto.AddressRequestDtoFields.country);
 			if(!status.isValidated()) {
 				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
 			}
