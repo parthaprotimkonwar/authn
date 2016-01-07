@@ -43,11 +43,58 @@ public class ActivitiesController extends BaseController{
 		AddressResponseDto response = null;
 		try {
 			AddressRequestDto addressRequest = convertRequestBodyToObject(request().body(), AddressRequestDto.class);
+			UsersRequestDtoValidationEngine validator = new UsersRequestDtoValidationEngine();
+			// validation for token field
+			ValidationResponse status = validator.checkForMandatoryFields(addressRequest, AddressRequestDto.AddressRequestDtoFields.token);
+			if(!status.isValidated()) {
+				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
+			}
+			
+			// validation for pincode field
+			status = validator.checkForMandatoryFields(addressRequest, AddressRequestDto.AddressRequestDtoFields.pincode);
+			if(!status.isValidated()) {
+				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
+			}
+			
+			// validation for address field
+			status = validator.checkForMandatoryFields(addressRequest, AddressRequestDto.AddressRequestDtoFields.address);
+			if(!status.isValidated()) {
+				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
+			}
+			
+			// validation for phoneNo field
+			status = validator.checkForMandatoryFields(addressRequest, AddressRequestDto.AddressRequestDtoFields.phoneNo);
+			if(!status.isValidated()) {
+				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
+			}
+			
+			// validation for city field
+			status = validator.checkForMandatoryFields(addressRequest, AddressRequestDto.AddressRequestDtoFields.city);
+			if(!status.isValidated()) {
+				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
+			}
+			
+			// validation for state field
+			status = validator.checkForMandatoryFields(addressRequest, AddressRequestDto.AddressRequestDtoFields.state);
+			if(!status.isValidated()) {
+				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
+			}
+			
+			// validation for country field
+			status = validator.checkForMandatoryFields(addressRequest, AddressRequestDto.AddressRequestDtoFields.country);
+			if(!status.isValidated()) {
+				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
+			}
+			
 			Users user = servicesFactory.userTokenService.findUserAttachedToToken(addressRequest.token);
 			UserAddress userAddress = servicesFactory.userAddressService.createUserAddress(user, addressRequest);
 			response = new AddressResponseDto(addressRequest.token, userAddress.userIdAddressId.address.addressId, utilities.AppConstants.Status.SUCCESS.name());
 			
-		} catch (BaseException ex) {
+		} catch (ValidationException ex) {
+			ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode(), ex.getErrorMessage(), ex.getErrorMessages());
+			return validationErrorToJsonResponse(errorResponse);
+		}
+		catch (BaseException ex) {
 			ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode(), ex.getErrorMessage());
 			return errorObjectToJsonResponse(errorResponse);
 		} catch (Exception e) {
@@ -64,6 +111,7 @@ public class ActivitiesController extends BaseController{
 		try {
 			AddressRequestDto addressRequest = convertRequestBodyToObject(request().body(), AddressRequestDto.class);
 			UsersRequestDtoValidationEngine validator = new UsersRequestDtoValidationEngine();
+			// validation for token field
 			ValidationResponse status = validator.checkForMandatoryFields(addressRequest, AddressRequestDto.AddressRequestDtoFields.token);
 			if(!status.isValidated()) {
 				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
