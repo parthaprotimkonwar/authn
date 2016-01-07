@@ -131,6 +131,29 @@ public class LoginController extends BaseController{
 			ValidationResponse status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.userType);			//userType is mandatory for now
 			if(!status.isValidated()) {
 				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
+			} 
+			// validating email field
+			status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.email);
+			if(!status.isValidated()) {
+				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
+			}
+			
+			// validating phone_no field
+			status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.phoneNo);
+			if(!status.isValidated()) {
+				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
+			}
+			
+			// validating password field
+			status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.password);
+			if(!status.isValidated()) {
+				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
+			}
+			
+			// validating name field
+			status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.name);
+			if(!status.isValidated()) {
+				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
 			}
 			
 			UserType userType = UserType.value(userRequestDto.userType);
