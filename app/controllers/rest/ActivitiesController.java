@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import controllers.base.BaseController;
 import controllers.requestdto.AddressRequestDto;
+import controllers.requestdto.UsersRequestDto;
 import controllers.responsedto.AddressDto;
 import controllers.responsedto.AddressResponseDto;
 import controllers.responsedto.ErrorResponse;
@@ -18,9 +19,12 @@ import models.UserAddress;
 import models.Users;
 import play.exceptions.BaseException;
 import play.exceptions.ErrorConstants;
+import play.exceptions.ValidationException;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import services.serviceimpl.ServicesFactory;
+import validations.responsehandlers.ValidationResponse;
+import validations.validationengines.UsersRequestDtoValidationEngine;
 
 @Named
 @Singleton
@@ -59,11 +63,21 @@ public class ActivitiesController extends BaseController{
 		ListsAddressResponseDto response = null;
 		try {
 			AddressRequestDto addressRequest = convertRequestBodyToObject(request().body(), AddressRequestDto.class);
+			UsersRequestDtoValidationEngine validator = new UsersRequestDtoValidationEngine();
+			ValidationResponse status = validator.checkForMandatoryFields(addressRequest, AddressRequestDto.AddressRequestDtoFields.token);
+			if(!status.isValidated()) {
+				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
+			}
+			
 			Users user = servicesFactory.userTokenService.findUserAttachedToToken(addressRequest.token);
 			List<AddressDto> addresses = servicesFactory.userAddressService.findUserAddress(user);
 			response = new ListsAddressResponseDto(addressRequest.token, addresses, utilities.AppConstants.Status.SUCCESS.name());
 			
-		} catch (BaseException ex) {
+		} catch (ValidationException ex) {
+			ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode(), ex.getErrorMessage(), ex.getErrorMessages());
+			return validationErrorToJsonResponse(errorResponse);
+		}
+		catch (BaseException ex) {
 			ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode(), ex.getErrorMessage());
 			return errorObjectToJsonResponse(errorResponse);
 		} catch (Exception e) {
