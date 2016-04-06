@@ -1,12 +1,17 @@
 package controllers.rest;
 
+import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.springframework.transaction.annotation.Transactional;
+
+import com.frugalbin.common.dto.request.integration.UserDetailsBean;
+import com.frugalbin.common.exceptions.BusinessException;
 
 import controllers.base.BaseController;
 import controllers.requestdto.AddressRequestDto;
@@ -16,6 +21,7 @@ import controllers.responsedto.ErrorResponse;
 import controllers.responsedto.ListsAddressResponseDto;
 import models.UserAddress;
 import models.Users;
+import models.UsersGuest;
 import play.exceptions.BaseException;
 import play.exceptions.ErrorConstants;
 import play.mvc.BodyParser;
@@ -71,5 +77,37 @@ public class ActivitiesController extends BaseController{
 			return errorObjectToJsonResponse(errorResponse);
 		}
 		return convertObjectToJsonResponse(response);
+	}
+	
+	@BodyParser.Of(BodyParser.Json.class)
+	public Result getUser()
+	{
+		UserDetailsBean userDetails = new UserDetailsBean();
+		try
+		{
+			Map<String, Integer> map = convertRequestBodyToObject(request().body(), Map.class);
+			Long userId = map.get("userId").longValue();
+			UsersGuest user = servicesFactory.usersGuestService.findUserById(userId);
+			
+			if(user == null)
+			{
+				throw new BusinessException(1001, "User is invalid");
+			}
+			
+			userDetails.setUserId(userId);
+			userDetails.setEmail(user.emailId);
+			userDetails.setPhoneno(user.phoneNo);
+		}
+		catch (BaseException ex)
+		{
+			ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode(), ex.getErrorMessage());
+			return errorObjectToJsonResponse(errorResponse);
+		}
+		catch (BusinessException e)
+		{
+			ErrorResponse errorResponse = new ErrorResponse(e.getErrorCode() + "", e.getErrorMessage());
+			return errorObjectToJsonResponse(errorResponse);
+		}
+		return convertObjectToJsonResponse(userDetails);
 	}
 }

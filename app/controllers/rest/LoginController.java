@@ -61,7 +61,7 @@ public class LoginController extends BaseController{
 					UsersFrugal userFrugal = serviceFactory.usersFrugalService.login(userRequestDto);
 					if(userFrugal != null) {
 						 userToken = serviceFactory.userTokenService.createOrupdateToken(userFrugal.userId);
-						 response = new UsersResponseDto(userToken.tokenId, utilities.AppConstants.Status.SUCCESS.name());
+						 response = new UsersResponseDto(userFrugal.userId, userToken.tokenId, utilities.AppConstants.Status.SUCCESS.name());
 					} else {
 						throw new BaseException(INVALID_LOGIN.errorCode, INVALID_LOGIN.errorMessage);
 					}
@@ -79,7 +79,7 @@ public class LoginController extends BaseController{
 					if(userSocial != null) {
 						 userToken = serviceFactory.userTokenService.createOrupdateToken(userSocial.userId);
 					}
-					response = new UsersResponseDto(userToken.tokenId, utilities.AppConstants.Status.SUCCESS.name());
+					response = new UsersResponseDto(userSocial.userId, userToken.tokenId, utilities.AppConstants.Status.SUCCESS.name());
 					break;
 					
 				case GUEST:
@@ -93,7 +93,7 @@ public class LoginController extends BaseController{
 					if(userGuest != null) {
 						 userToken = serviceFactory.userTokenService.createOrupdateToken(userGuest.userId);
 					}
-					response = new UsersResponseDto(userToken.tokenId, utilities.AppConstants.Status.SUCCESS.name());
+					response = new UsersResponseDto(userGuest.userId, userToken.tokenId, utilities.AppConstants.Status.SUCCESS.name());
 					break;
 				
 				default:
@@ -147,7 +147,7 @@ public class LoginController extends BaseController{
 					if(userFrugal == null) {		//email id not present in system
 						userFrugal = serviceFactory.usersFrugalService.createUser(userRequestDto, user);
 						userToken = serviceFactory.userTokenService.createOrupdateToken(userFrugal.userId);
-						response = new UsersResponseDto(userToken.tokenId, utilities.AppConstants.Status.SUCCESS.name());
+						response = new UsersResponseDto(userFrugal.userId, userToken.tokenId, utilities.AppConstants.Status.SUCCESS.name());
 					} else {
 						serviceFactory.usersService.deleteUser(user.userId); //deleting the already created user
 						throw new BaseException(DUPLICATE_EMAIL_ID.errorCode, DUPLICATE_EMAIL_ID.errorMessage);

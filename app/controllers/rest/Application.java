@@ -80,7 +80,7 @@ public class Application extends BaseController {
 	    	
 	    	response = new ArrayList<>();
 	    	for(Users user : users) {
-	    		UsersResponseDto aUserResponse = new UsersResponseDto(String.valueOf(user.userId), user.userType);
+	    		UsersResponseDto aUserResponse = new UsersResponseDto(user.userId, String.valueOf(user.userId), user.userType);
 	    		response.add(aUserResponse);
 	    	}
 	    	

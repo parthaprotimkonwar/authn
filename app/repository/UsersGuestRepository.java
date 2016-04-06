@@ -7,6 +7,6 @@ import models.UsersGuest;
 
 @Repository
 public interface UsersGuestRepository extends JpaRepository<UsersGuest, Long>{
-
+	
 	UsersGuest findByEmailId(String emailId);
 }
