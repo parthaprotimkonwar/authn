@@ -58,6 +58,19 @@ public class LoginController extends BaseController{
 			switch (userType) {
 				
 				case FRUGAL:
+					// validation for password field
+					status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.password);
+					if(!status.isValidated()) {
+						throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
+					}
+					
+					// validation for either email or phone_no field. From two one should be present
+					ValidationResponse statusEmail = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.email);
+					ValidationResponse statusPhone = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.phoneNo);
+					if( !(statusEmail.isValidated() || statusPhone.isValidated()) ) {
+						throw new ValidationException(statusEmail.getErrorCode(), null, statusEmail.getErrorMessage());
+					}
+
 					UsersFrugal userFrugal = serviceFactory.usersFrugalService.login(userRequestDto);
 					if(userFrugal != null) {
 						 userToken = serviceFactory.userTokenService.createOrupdateToken(userFrugal.userId);
@@ -68,6 +81,14 @@ public class LoginController extends BaseController{
 					break;
 				
 				case SOCIAL:
+					// validation for mandatory field
+					status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.password,
+							UsersRequestDto.UsersRequestFields.email,
+							UsersRequestDto.UsersRequestFields.phoneNo);
+					if(!status.isValidated()) {
+						throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
+					}
+					
 					UsersSocial userSocial = null;
 					userSocial = serviceFactory.usersSocialService.login(userRequestDto);
 
@@ -83,6 +104,19 @@ public class LoginController extends BaseController{
 					break;
 					
 				case GUEST:
+					// validation for userName field
+					status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.name);
+					if(!status.isValidated()) {
+						throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
+					}
+					
+					// validation for either email or phone_no field. From two one should be present
+					statusEmail = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.email);
+					statusPhone = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.phoneNo);
+					if( !(statusEmail.isValidated() || statusPhone.isValidated()) ) {
+						throw new ValidationException(statusEmail.getErrorCode(), null, statusEmail.getErrorMessage());
+					}
+					
 					UsersGuest userGuest = null;
 					userGuest = serviceFactory.usersGuestService.login(userRequestDto);
 					
@@ -126,12 +160,16 @@ public class LoginController extends BaseController{
 		UsersResponseDto response;
 		try { 
 			UsersRequestDto userRequestDto = convertRequestBodyToObject(request().body(), UsersRequestDto.class);
-			
+			// validating mandatory fields
 			UsersRequestDtoValidationEngine validator = new UsersRequestDtoValidationEngine();
-			ValidationResponse status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.userType);			//userType is mandatory for now
+			ValidationResponse status = validator.checkForMandatoryFields(userRequestDto, UsersRequestDto.UsersRequestFields.userType,
+					UsersRequestDto.UsersRequestFields.email,
+					UsersRequestDto.UsersRequestFields.phoneNo,
+					UsersRequestDto.UsersRequestFields.password,
+					UsersRequestDto.UsersRequestFields.name);
 			if(!status.isValidated()) {
 				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
-			}
+			} 
 			
 			UserType userType = UserType.value(userRequestDto.userType);
 			

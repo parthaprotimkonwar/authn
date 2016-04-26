@@ -15,6 +15,7 @@ import com.frugalbin.common.exceptions.BusinessException;
 
 import controllers.base.BaseController;
 import controllers.requestdto.AddressRequestDto;
+import controllers.requestdto.UsersRequestDto;
 import controllers.responsedto.AddressDto;
 import controllers.responsedto.AddressResponseDto;
 import controllers.responsedto.ErrorResponse;
@@ -24,9 +25,12 @@ import models.Users;
 import models.UsersGuest;
 import play.exceptions.BaseException;
 import play.exceptions.ErrorConstants;
+import play.exceptions.ValidationException;
 import play.mvc.BodyParser;
 import play.mvc.Result;
 import services.serviceimpl.ServicesFactory;
+import validations.responsehandlers.ValidationResponse;
+import validations.validationengines.UsersRequestDtoValidationEngine;
 
 @Named
 @Singleton
@@ -45,11 +49,28 @@ public class ActivitiesController extends BaseController{
 		AddressResponseDto response = null;
 		try {
 			AddressRequestDto addressRequest = convertRequestBodyToObject(request().body(), AddressRequestDto.class);
+			UsersRequestDtoValidationEngine validator = new UsersRequestDtoValidationEngine();
+			// validation for mandatory fields
+			ValidationResponse status = validator.checkForMandatoryFields(addressRequest, AddressRequestDto.AddressRequestDtoFields.token,
+					AddressRequestDto.AddressRequestDtoFields.pincode,
+					AddressRequestDto.AddressRequestDtoFields.address,
+					AddressRequestDto.AddressRequestDtoFields.phoneNo,
+					AddressRequestDto.AddressRequestDtoFields.city,
+					AddressRequestDto.AddressRequestDtoFields.state,
+					AddressRequestDto.AddressRequestDtoFields.country);
+			if(!status.isValidated()) {
+				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
+			}
+			
 			Users user = servicesFactory.userTokenService.findUserAttachedToToken(addressRequest.token);
 			UserAddress userAddress = servicesFactory.userAddressService.createUserAddress(user, addressRequest);
 			response = new AddressResponseDto(addressRequest.token, userAddress.userIdAddressId.address.addressId, utilities.AppConstants.Status.SUCCESS.name());
 			
-		} catch (BaseException ex) {
+		} catch (ValidationException ex) {
+			ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode(), ex.getErrorMessage(), ex.getErrorMessages());
+			return validationErrorToJsonResponse(errorResponse);
+		}
+		catch (BaseException ex) {
 			ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode(), ex.getErrorMessage());
 			return errorObjectToJsonResponse(errorResponse);
 		} catch (Exception e) {
@@ -65,11 +86,22 @@ public class ActivitiesController extends BaseController{
 		ListsAddressResponseDto response = null;
 		try {
 			AddressRequestDto addressRequest = convertRequestBodyToObject(request().body(), AddressRequestDto.class);
+			UsersRequestDtoValidationEngine validator = new UsersRequestDtoValidationEngine();
+			// validation for token field
+			ValidationResponse status = validator.checkForMandatoryFields(addressRequest, AddressRequestDto.AddressRequestDtoFields.token);
+			if(!status.isValidated()) {
+				throw new ValidationException(status.getErrorCode(), null, status.getErrorMessage());
+			}
+			
 			Users user = servicesFactory.userTokenService.findUserAttachedToToken(addressRequest.token);
 			List<AddressDto> addresses = servicesFactory.userAddressService.findUserAddress(user);
 			response = new ListsAddressResponseDto(addressRequest.token, addresses, utilities.AppConstants.Status.SUCCESS.name());
 			
-		} catch (BaseException ex) {
+		} catch (ValidationException ex) {
+			ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode(), ex.getErrorMessage(), ex.getErrorMessages());
+			return validationErrorToJsonResponse(errorResponse);
+		}
+		catch (BaseException ex) {
 			ErrorResponse errorResponse = new ErrorResponse(ex.getErrorCode(), ex.getErrorMessage());
 			return errorObjectToJsonResponse(errorResponse);
 		} catch (Exception e) {
