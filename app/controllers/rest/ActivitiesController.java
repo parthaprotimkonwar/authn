@@ -97,6 +97,8 @@ public class ActivitiesController extends BaseController{
 			userDetails.setUserId(userId);
 			userDetails.setEmail(user.emailId);
 			userDetails.setPhoneno(user.phoneNo);
+			userDetails.setFirstName(user.firstName);
+			userDetails.setLastName(user.lastName);
 		}
 		catch (BaseException ex)
 		{

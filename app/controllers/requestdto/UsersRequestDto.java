@@ -13,16 +13,18 @@ public class UsersRequestDto implements Serializable{
 
 	public UsersRequestDto() {}
 	
-	public UsersRequestDto(String userType, String name, String password, String email, String phoneNo) {
+	public UsersRequestDto(String userType, String password, String email, String phoneNo, String firstName, String lastName) {
 		this.userType = userType;
-		this.name = name;
+		this.firstName = firstName;
+		this.lastName = lastName;
 		this.password = password;
 		this.email = email;
 		this.phoneNo = phoneNo;
 	}
 	
 	public String userType;
-	public String name;
+	public String firstName;
+	public String lastName;
 	public String password;
 	public String email;
 	public String phoneNo;

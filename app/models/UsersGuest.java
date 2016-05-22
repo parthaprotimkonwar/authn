@@ -17,18 +17,26 @@ public class UsersGuest {
 
 	public UsersGuest() {}
 	
-	public UsersGuest(Long userId, String emailId, Date lastLogin, Date createdOn, String phoneNo, String status) {
+	public UsersGuest(Long userId, String emailId, Date lastLogin, Date createdOn, String phoneNo, String status, String firstName, String lastName) {
 		this.userId = userId;
 		this.emailId = emailId;
 		this.lastLogin = lastLogin;
 		this.createdOn = createdOn;
 		this.phoneNo = phoneNo;
 		this.status = status;
+		this.firstName = firstName;
+		this.lastName = lastName;
 	}
 	
 	@Id
 	@Column(name="USER_ID", length=100, nullable=false)
 	public Long userId;
+	
+	@Column(name="FIRST_NAME", length=20)
+	public String firstName;
+	
+	@Column(name="LAST_NAME", length=20)
+	public String lastName;
 	
 	@Column(name="EMAIL_ID", length=30, unique=true, nullable=false)
 	public String emailId;

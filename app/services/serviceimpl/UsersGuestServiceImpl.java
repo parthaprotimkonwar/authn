@@ -27,7 +27,8 @@ public class UsersGuestServiceImpl implements UsersGuestServiceI{
 	public UsersGuest createUser(UsersRequestDto request, Users user) throws BaseException {
 		try {
 			Date now = new Date();
-			UsersGuest userGuest = new UsersGuest(user.userId, request.email, now, now, request.phoneNo, AppConstants.Status.ACTIVE.name());
+			UsersGuest userGuest = new UsersGuest(user.userId, request.email, now, now, 
+					request.phoneNo, AppConstants.Status.ACTIVE.name(), request.firstName, request.lastName);
 			return userGuestRepository.save(userGuest);
 		} catch (Exception ex) {
 			ErrorConstants error = ErrorConstants.DATA_PERSISTANT_EXCEPTION;

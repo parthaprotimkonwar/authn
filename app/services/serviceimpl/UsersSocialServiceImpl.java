@@ -26,7 +26,7 @@ public class UsersSocialServiceImpl implements UsersSocialServiceI{
 	public UsersSocial createUser(UsersRequestDto request, Users user) throws BaseException{
 		try {
 			Date now = new Date();
-			UsersSocial userSocial = new UsersSocial(user.userId, request.name, now, now, request.email, request.phoneNo, AppConstants.Status.ACTIVE.name());
+			UsersSocial userSocial = new UsersSocial(user.userId, request.firstName, now, now, request.email, request.phoneNo, AppConstants.Status.ACTIVE.name());
 			return usersSocialRepository.save(userSocial);
 			
 		} catch (Exception ex) {

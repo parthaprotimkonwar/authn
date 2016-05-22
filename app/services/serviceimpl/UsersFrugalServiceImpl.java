@@ -27,7 +27,7 @@ public class UsersFrugalServiceImpl implements UsersFrugalServiceI{
 	public UsersFrugal createUser(UsersRequestDto request, @NotNull Users user) throws BaseException{
 		try {
 			Date now = new Date();
-			UsersFrugal userFrugal = new UsersFrugal(user.userId, request.name, request.password, now, now, request.email, request.phoneNo, Status.CONFIRMATION_PENDING.name());
+			UsersFrugal userFrugal = new UsersFrugal(user.userId, request.firstName, request.password, now, now, request.email, request.phoneNo, Status.CONFIRMATION_PENDING.name());
 			return userFrugalRepository.save(userFrugal);
 		} catch (Exception ex) {
 			ErrorConstants error = ErrorConstants.DATA_PERSISTANT_EXCEPTION;
